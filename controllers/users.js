@@ -110,7 +110,7 @@ module.exports.updateUserData = (req, res, next) => {
   User
     .findByIdAndUpdate(req.user._id, {
       name: req.body.name,
-      about: req.body.about,
+      email: req.body.email,
     }, opts)
     .orFail(() => next(new NotFound('Пользователь не найден')))
     .select('+password')
