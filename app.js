@@ -3,11 +3,13 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
 const routerIndex = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
 const NotFound = require('./errors/NotFound');
 const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const limiter = require('./const/limiter');
 
 // Working port
 
@@ -15,7 +17,7 @@ const { PORT = 3000 } = process.env;
 
 // Database URL
 
-const BASE_URL = 'mongodb://127.0.0.1:27017/mestodb';
+const BASE_URL = 'mongodb://127.0.0.1:27017/bitfilmsdb';
 
 const app = express();
 
@@ -30,11 +32,15 @@ mongoose
 
 app.use(cors);
 
-app.use(express.json());
-
 app.use(cookieParser());
 
+app.use(helmet());
+
+app.use(express.json());
+
 app.use(requestLogger);
+
+app.use(limiter);
 
 // Server Crash test
 

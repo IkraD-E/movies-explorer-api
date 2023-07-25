@@ -24,7 +24,7 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.getMovies = (req, res, next) => {
   Movie
     .find({})
-    .populate(['owner', 'likes'])
+    .populate(['owner'])
     .then((movies) => res.send(movies))
     .catch(next);
 };
