@@ -14,7 +14,7 @@ module.exports.createMovie = (req, res, next) => {
     .then((movie) => res.status(201).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequest('Введены некорректные данные'));
+        next(new BadRequest('Введены некорректные данные фильма'));
       } else {
         next(err);
       }
@@ -32,11 +32,11 @@ module.exports.getMovies = (req, res, next) => {
 module.exports.deleteMovie = (req, res, next) => {
   Movie
     .findById(req.params.movieId)
-    .orFail(() => next(new NotFound('Карточка не найдена')))
+    .orFail(() => next(new NotFound('Фильм не найден')))
     .populate(['owner'])
     .then((movie) => {
       if (!(req.user._id === String(movie.owner._id))) {
-        next(new MissiedData('Эта карточка принадлежит другому пользователю'));
+        next(new MissiedData('Этот фильм принадлежит другому пользователю'));
       } else {
         Movie.findByIdAndRemove(req.params.movieId)
           .then((deletedMovie) => res.send(deletedMovie))
@@ -45,7 +45,7 @@ module.exports.deleteMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequest('Некорректные данные карточки'));
+        next(new BadRequest('Некорректные данные фильма'));
       } else {
         next(err);
       }
