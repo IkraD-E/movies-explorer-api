@@ -4,12 +4,12 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
-const routerIndex = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
 const NotFound = require('./errors/NotFound');
 const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./const/limiter');
+const router = require('./routes');
 
 // Working port
 
@@ -17,7 +17,7 @@ const { PORT = 3000 } = process.env;
 
 // Database URL
 
-const BASE_URL = 'mongodb://127.0.0.1:27017/bitfilmsdb';
+const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.DATABASE_URL : 'mongodb://127.0.0.1:27017/bitfilmsdb';
 
 const app = express();
 
@@ -50,7 +50,7 @@ app.use(limiter);
 //   }, 0);
 // });
 
-app.use('/', routerIndex);
+app.use('/', router);
 
 app.use((req, res, next) => {
   next(new NotFound('Страница не найдена. Где вы взяли на неё ссылку?'));
