@@ -111,13 +111,6 @@ module.exports.updateUserData = (req, res, next) => {
   const newUserEmail = req.body.email;
   const newUserName = req.body.name;
   User
-    .find({ email: newUserEmail })
-    .then((isEmailTaken) => {
-      if (isEmailTaken.length > 1) {
-        next(new UserDublication('Пользователь с этой почтой уже зарегестрирован'));
-      }
-    });
-  User
     .findByIdAndUpdate(userId, {
       name: newUserName,
       email: newUserEmail,
