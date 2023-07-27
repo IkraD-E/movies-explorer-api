@@ -20,7 +20,7 @@ const opts = {
 
 module.exports.createUser = (req, res, next) => {
   const { email, name, password } = req.body;
-  if (!email || !name || !password) {
+  if (!(email && name && password)) {
     next(new BadRequest('Переданы некорректные данные при регистрации'));
   }
   bcrypt
@@ -44,7 +44,7 @@ module.exports.createUser = (req, res, next) => {
           });
       },
     )
-    .catch((next));
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
@@ -76,7 +76,8 @@ module.exports.login = (req, res, next) => {
           } else {
             next(new AuthError('Неправильный логин или пароль'));
           }
-        });
+        })
+        .catch(next);
     })
     .catch(next);
 };
@@ -131,7 +132,9 @@ module.exports.updateUserData = (req, res, next) => {
     .select('+password')
     .then((user) => res.status(OK_STATUS).send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.code === DATA_DUPLICATION_CODE) {
+        next(new DataDublicationError('Пользователь с введённой почтой уже зарегестрирован'));
+      } else if (err.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные'));
       } else {
         next(err);

@@ -28,6 +28,7 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.getUsersMovies = (req, res, next) => {
   Movie
     .find({ owner: req.user._id })
+    .orFail(() => next(new NotFound('Фильмов у данного опльзователя не обнаруженно')))
     .then((movies) => res.status(OK_STATUS).send(movies))
     .catch(next);
 };
