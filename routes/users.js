@@ -1,4 +1,4 @@
-const router = require('express').Router();
+const routesUsers = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
 const {
@@ -9,11 +9,11 @@ const {
   logout,
 } = require('../controllers/users');
 
-router.get('/', getUsers);
+routesUsers.get('/', getUsers);
 
-router.get('/me', getUserMe);
+routesUsers.get('/me', getUserMe);
 
-router.delete(
+routesUsers.delete(
   '/me',
   celebrate({
     body: Joi.object().keys({
@@ -24,7 +24,7 @@ router.delete(
   logout,
 );
 
-router.get(
+routesUsers.get(
   '/:userId',
   celebrate({
     params: Joi.object().keys({
@@ -34,7 +34,7 @@ router.get(
   getUserById,
 );
 
-router.patch(
+routesUsers.patch(
   '/me',
   celebrate({
     body: Joi.object().keys({
@@ -45,4 +45,4 @@ router.patch(
   updateUserData,
 );
 
-module.exports = router;
+module.exports = routesUsers;

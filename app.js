@@ -9,7 +9,7 @@ const NotFound = require('./errors/NotFound');
 const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./const/limiter');
-const router = require('./routes');
+const routes = require('./routes');
 
 // Working port
 
@@ -50,7 +50,7 @@ app.use(limiter);
 //   }, 0);
 // });
 
-app.use('/', router);
+app.use(routes);
 
 app.use((req, res, next) => {
   next(new NotFound('Страница не найдена. Где вы взяли на неё ссылку?'));

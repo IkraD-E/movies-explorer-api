@@ -5,8 +5,13 @@ const User = require('../models/user');
 
 const NotFound = require('../errors/NotFound');
 const AuthError = require('../errors/AuthError');
-const UserDublication = require('../errors/UserDublication');
+const DataDublicationError = require('../errors/DataDublicationError');
 const BadRequest = require('../errors/BadRequest');
+const {
+  OK_STATUS,
+  CREATED_STATUS,
+  DATA_DUPLICATION_CODE,
+} = require('../const/const');
 
 const opts = {
   new: true,
@@ -14,8 +19,12 @@ const opts = {
 };
 
 module.exports.createUser = (req, res, next) => {
+  const { email, name, password } = req.body;
+  if (!email || !name || !password) {
+    next(new BadRequest('Переданы некорректные данные при регистрации'));
+  }
   bcrypt
-    .hash(String(req.body.password), 10)
+    .hash(String(password), 10)
     .then(
       (hashedPassword) => {
         User
@@ -23,10 +32,10 @@ module.exports.createUser = (req, res, next) => {
             ...req.body,
             password: hashedPassword,
           })
-          .then((user) => res.status(201).send({ data: user }))
+          .then((user) => res.status(CREATED_STATUS).send({ data: user }))
           .catch((err) => {
-            if (err.code === 11000) {
-              next(new UserDublication('Пользователь с этой почтой уже зарегестрирован'));
+            if (err.code === DATA_DUPLICATION_CODE) {
+              next(new DataDublicationError('Пользователь с этой почтой уже зарегестрирован'));
             } else if (err.name === 'ValidationError') {
               next(new BadRequest('Переданы некорректные данные при регистрации'));
             } else {
@@ -40,11 +49,14 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  if (!(email && password)) {
+    next(new BadRequest('Переданы некорректные данные при регистрации'));
+  }
 
   User
     .findOne({ email })
     .select('+password')
-    .orFail(() => next(new AuthError('Пользователь не найден')))
+    .orFail(() => next(new AuthError('Неправильный логин или пароль')))
     .then((user) => {
       bcrypt.compare(String(password), user.password)
         .then((isValidUser) => {
@@ -60,7 +72,7 @@ module.exports.login = (req, res, next) => {
               sameSite: true,
               secure: true,
             });
-            res.send({ data: user.toJSON() });
+            res.status(OK_STATUS).send({ data: user.toJSON() });
           } else {
             next(new AuthError('Неправильный логин или пароль'));
           }
@@ -80,7 +92,7 @@ module.exports.logout = (req, res) => {
 module.exports.getUsers = (req, res, next) => {
   User
     .find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.status(OK_STATUS).send(users))
     .catch(next);
 };
 
@@ -88,7 +100,7 @@ module.exports.getUserById = (req, res, next) => {
   User
     .findById(req.params.userId)
     .orFail(() => next(new NotFound('Пользователь не найден')))
-    .then((user) => res.send(user))
+    .then((user) => res.status(OK_STATUS).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequest('Передан некорректный id'));
@@ -102,7 +114,7 @@ module.exports.getUserMe = (req, res, next) => {
   User
     .findById(req.user._id)
     .orFail(() => next(new NotFound('Пользователь не найден')))
-    .then((user) => res.send(user))
+    .then((user) => res.status(OK_STATUS).send(user))
     .catch(next);
 };
 
@@ -117,7 +129,7 @@ module.exports.updateUserData = (req, res, next) => {
     }, opts)
     .orFail(() => next(new NotFound('Пользователь не найден')))
     .select('+password')
-    .then((user) => res.send(user))
+    .then((user) => res.status(OK_STATUS).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные'));

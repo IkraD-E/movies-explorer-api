@@ -2,6 +2,10 @@ const Movie = require('../models/movie');
 const MissiedData = require('../errors/MissiedData');
 const NotFound = require('../errors/NotFound');
 const BadRequest = require('../errors/BadRequest');
+const {
+  OK_STATUS,
+  CREATED_STATUS,
+} = require('../const/const');
 
 module.exports.createMovie = (req, res, next) => {
   const data = {
@@ -11,7 +15,7 @@ module.exports.createMovie = (req, res, next) => {
 
   Movie
     .create(data)
-    .then((movie) => res.status(201).send(movie))
+    .then((movie) => res.status(CREATED_STATUS).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequest('Введены некорректные данные фильма'));
@@ -21,10 +25,10 @@ module.exports.createMovie = (req, res, next) => {
     });
 };
 
-module.exports.getMovies = (req, res, next) => {
+module.exports.getUsersMovies = (req, res, next) => {
   Movie
     .find({ owner: req.user._id })
-    .then((movies) => res.send(movies))
+    .then((movies) => res.status(OK_STATUS).send(movies))
     .catch(next);
 };
 
@@ -37,7 +41,7 @@ module.exports.deleteMovie = (req, res, next) => {
         next(new MissiedData('Этот фильм принадлежит другому пользователю'));
       } else {
         Movie.findByIdAndRemove(req.params.movieId)
-          .then((deletedMovie) => res.send(deletedMovie))
+          .then((deletedMovie) => res.send.status(OK_STATUS)(deletedMovie))
           .catch(next);
       }
     })
