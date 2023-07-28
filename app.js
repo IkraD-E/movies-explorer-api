@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
@@ -11,23 +10,19 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./const/limiter');
 const routes = require('./routes');
 
-// Working port
+// Working port & Database URL
 
-const { PORT = 3000 } = process.env;
-
-// Database URL
-
-const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.DATABASE_URL : 'mongodb://127.0.0.1:27017/bitfilmsdb';
+const { SERVER_PORT, DB_URL } = require('./utils/config');
 
 const app = express();
 
 mongoose
-  .connect(BASE_URL)
+  .connect(DB_URL)
   .then(() => {
-    console.log(`Успешно подключен к серверу: ${BASE_URL}`);
+    console.log(`Успешно подключен к серверу: ${DB_URL}`);
   })
   .catch(() => {
-    console.log(`Провалено подключение к серверу: ${BASE_URL}`);
+    console.log(`Провалено подключение к серверу: ${DB_URL}`);
   });
 
 app.use(cors);
@@ -62,6 +57,6 @@ app.use(errors());
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Слушаем порт: ${PORT}`);
+app.listen(SERVER_PORT, () => {
+  console.log(`Слушаем порт: ${SERVER_PORT}`);
 });
