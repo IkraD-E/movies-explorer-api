@@ -28,7 +28,7 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.getUsersMovies = (req, res, next) => {
   Movie
     .find({ owner: req.user._id })
-    .orFail(() => next(new NotFound('Фильмов у данного опльзователя не обнаруженно')))
+    .orFail(() => next(new NotFound('В вашем списке фильмов пока ничего нет')))
     .then((movies) => res.status(OK_STATUS).send(movies))
     .catch(next);
 };
@@ -42,7 +42,7 @@ module.exports.deleteMovie = (req, res, next) => {
         next(new MissiedData('Этот фильм принадлежит другому пользователю'));
       } else {
         Movie.findByIdAndRemove(req.params.movieId)
-          .then((deletedMovie) => res.send.status(OK_STATUS)(deletedMovie))
+          .then((deletedMovie) => res.status(OK_STATUS).send(deletedMovie))
           .catch(next);
       }
     })
