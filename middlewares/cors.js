@@ -1,6 +1,6 @@
 const allowedCors = [
-  'http://ikrad-movies-explorer.nomoredomains.xyz/signup',
-  'https://ikrad-movies-explorer.nomoredomains.xyz/signup',
+  'http://ikrad-movies-explorer.nomoredomains.xyz',
+  'https://ikrad-movies-explorer.nomoredomains.xyz',
   'http://api.ikrad-movies-explorer.nomoredomains.xyz',
   'https://api.ikrad-movies-explorer.nomoredomains.xyz',
   'localhost:3000',
