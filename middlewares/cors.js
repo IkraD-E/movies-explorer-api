@@ -1,8 +1,8 @@
 const allowedCors = [
-  'http://mesto.ikrad.nomoreparties.sbs',
-  'https://mesto.ikrad.nomoreparties.sbs',
-  'http://ikrad.nomoreparties.sbs',
-  'https://ikrad.nomoreparties.sbs',
+  'http://ikrad-movies-explorer.nomoredomains.xyz/signup',
+  'https://ikrad-movies-explorer.nomoredomains.xyz/signup',
+  'http://api.ikrad-movies-explorer.nomoredomains.xyz',
+  'https://api.ikrad-movies-explorer.nomoredomains.xyz',
   'localhost:3000',
   'http://localhost:3000',
   'localhost:3001',
