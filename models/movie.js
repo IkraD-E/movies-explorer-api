@@ -11,7 +11,6 @@ const movieShema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 2,
-    maxlength: 30,
   },
   duration: {
     type: Number,
@@ -20,7 +19,6 @@ const movieShema = new mongoose.Schema({
   year: {
     type: String,
     minlength: 3,
-    maxlength: 4,
   },
   description: {
     type: String,
